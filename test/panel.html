@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <title>Panel</title>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+        let ws;
+
+        function emblinken(data) {
+          let blinkenText = '';
+          let separator = data.lastIndexOf('|');
+          let parts = data.split("|");
+          let text = data.substring(0, separator);
+          let flashingCharactersHex = data.substring(separator+1);
+          let flashingCharacters = 0;
+          try {
+            flashingCharacters = parseInt(flashingCharactersHex, 16);
+          } catch (e) {
+            console.error(`failed to parse hex number after | character: ${data}`, e);
+            return data;
+          }
+
+          let flashing = false;
+          for (let i = 0; i < text.length; i++) {
+            let shouldFlash = flashingCharacters & (1 << i);
+            if ((shouldFlash && flashing) ||
+                (!shouldFlash && !flashing)) {
+              // No change, just append
+              blinkenText += text[i];
+            } else if (shouldFlash) {
+              flashing = true;
+              blinkenText += `<span class="blink">${text[i]}`;
+            } else {
+              flashing = false;
+              blinkenText += `</span>${text[i]}`;
+            }
+          }
+          if (flashing) {
+            blinkenText += '</span>';
+          }
+          return blinkenText;
+        }
+
+        function toggleConnection() {
+            if (!ws) {
+                document.getElementById('display').innerText = 'Connecting...';
+                ws = new WebSocket("ws://192.168.1.19/ws");
+                ws.onopen = function () {
+                    document.getElementById('display').innerText = 'Socket open';
+                    // Send a single message, needed at the moment for the server side to
+                    // get a handle to the socket.
+                    ws.send('Aslartybartfast:changeme');
+                }
+                ws.onmessage = function (evt) {
+                    console.log(evt.data);
+                    let processed = emblinken(evt.data);
+                    document.getElementById('display').innerHTML = processed;
+                };
+                ws.onclose = function () {
+                    // websocket is closed.
+                    //alert("Connection is closed...");
+                    document.getElementById('display').innerText = 'Server closed socket';
+                    ws = null;
+                };
+                document.getElementById('connect').innerText = 'Disconnect';
+            } else {
+                document.getElementById('display').innerText = 'Closing socket...';
+                ws.close();
+                document.getElementById('connect').innerText = 'Connect';
+                ws = null;
+            }
+        }
+        function send() {
+          const ta = document.getElementById('panelData');
+          console.log(ta.value);
+          ws.send(`P${ta.value}`);
+        }
+    </script>
+    <style>
+        .keypadButton {
+            height: 100%;
+            width: 90%;
+        }
+        .keypadSpecialButton {
+            height: 100%;
+            width: 80%;
+        }
+        .blink {
+          animation: blinker 1s linear infinite;
+        }
+        .fixed {
+          font-family: monospace;
+        }
+
+        @keyframes blinker {
+          50% {
+            opacity: 0;
+          }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" style="width: 1040px">
+        <div class="row gx-2">
+          <div class="col-11 gy-2">
+            <textarea class="form-control fixed" id="panelData" rows="10">00 07 1E FB 40 03 00 01 01 65
+00 07 1E FB 41 29 00 00 8A
+00 07 1E FB 42 23 00 01 08 96
+00 07 1E FB 43 22 00 09 7F CD 02 02 01 01 05 05 01 EB
+00 07 1E FB 44 40 00 01 08 AD
+00 07 1E FB 45 45 00 03 FF 00 00 AC
+00 07 1E FB 46 61 00 11 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 D8
+00 07 1E FB 47 50 00 13 10 00 10 53 61 74 20 20 31 20 4A 61 6E 20 30 30 BA 30 30 56
+00 07 1E FB 48 41 00 02 01 00 AC
+00 07 1E FB 49 42 00 01 00 AC
+00 07 1E FB 4A 40 00 01 08 B3</textarea>
+            <div id="display" class="form-control">&nbsp;</div>
+          </div>
+        </div>
+       
+        <div class="row gx-2">
+          <div class="col-6 gy-2">
+            <button class="btn btn-outline-primary" type="button" onclick="send()">
+              Send
+            </button>
+          </div>
+          <div class="col-6 gy-2">
+            <button class="btn btn-outline-primary" type="button" onclick="toggleConnection()">
+              Connect
+            </button>
+          </div>
+        </div>
+      <div>
+ 
+      </div>
+      </div>
+</body>
+</html>

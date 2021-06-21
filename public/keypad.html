@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <title>Keypad</title>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/smoothie/1.34.0/smoothie.min.js" integrity="sha512-PNAPdJIoyrliVDPtSFYtH9pFQyeTxofjm3vAueqtsduqKqMCaMIiJcGzMYECbnep0sT0qdqWemVbSm2h86NdjQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="./keypad.js" type="application/javascript"></script>
+
+    <style>
+        .keypadButton {
+            height: 100%;
+            width: 90%;
+        }
+        .keypadSpecialButton {
+            height: 100%;
+            width: 80%;
+        }
+        .keypadLed {
+            height: 60%;
+            width: 80%;
+            margin-top: 5px;
+            padding: 3px;
+            border-radius: 10px;
+            border-width: 1pt;
+            border-style: solid;
+        }
+        .displayDark {
+          background-color: #EEEEEE;
+        }
+        .displayLight {
+          border-color: cornflowerblue;
+          border-width: 1pt;
+        }
+        .ledDisabled {
+          background-color: #FFFFFF !important;
+        }
+        .keypadLedPower {
+          background-color: #77FF77;
+          border-color: #55CC55;
+        }
+        .keypadLedWarn {
+          background-color: #FFDD77;
+          border-color: #CCBB55;
+        }
+        .keypadLedAlarm {
+          background-color: #EE2222;
+          border-color: #CC0000;
+          color: #FFFFFF;
+        }
+        .blink {
+          animation: blinker 1s linear infinite;
+        }
+
+        @keyframes blinker {
+          50% {
+            opacity: 0;
+          }
+        }
+    </style>
+</head>
+<body onload="onLoad()">
+    <div class="container" style="width: 440px">
+        <div class="row gx-2">
+          <div class="col-11 gy-2">
+            <div id="display" class="form-control displayLight">&nbsp;</div>
+          </div>
+        </div>
+        <div class="row gx-2">
+          <div class="col-1 gy-1">
+            <div class="keypadLed keypadLedPower ledDisabled" id="keypadLedPower">&nbsp;</div>
+          </div>
+          <div class="col-1 gy-1">
+            <div class="keypadLed keypadLedWarn ledDisabled" id="keypadLedWarn">&nbsp;</div>
+          </div>
+          <div class="col-1 gy-1">
+            <div class="keypadLed keypadLedAlarm ledDisabled" id="keypadLedAlarm">&nbsp;</div>
+          </div>
+          <div class="col-8 gy-1">
+            <div id="audio" class="form-control" style="height: 80%">&nbsp;</div>
+          </div>
+        </div>
+        <div class="row gx-2">
+          <div class="col gy-2">
+            <button type="button" class="btn btn-outline-primary btn-lg keypadButton" onclick="keyClick('1')">1</button>
+          </div>
+          <div class="col gy-2">
+            <button type="button" class="btn btn-outline-primary btn-lg keypadButton" onclick="keyClick('2')">2</button>
+          </div>
+          <div class="col gy-2">
+            <button type="button" class="btn btn-outline-primary btn-lg keypadButton" onclick="keyClick('3')">3</button>
+          </div>
+          <div class="col-4 gy-2">
+            <button type="button" class="btn btn-outline-primary .text-nowrap keypadSpecialButton" onclick="keyClick('Q')">Play / Quit</button>
+          </div>
+        </div>
+        <div class="row gx-2">
+            <div class="col gy-2">
+                <button type="button" class="btn btn-outline-primary btn-lg keypadButton" onclick="keyClick('4')">4</button>
+              </div>
+              <div class="col gy-2">
+                <button type="button" class="btn btn-outline-primary btn-lg keypadButton" onclick="keyClick('5')">5</button>
+              </div>
+              <div class="col gy-2">
+                <button type="button" class="btn btn-outline-primary btn-lg keypadButton" onclick="keyClick('6')">6</button>
+              </div>
+              <div class="col-4 gy-2">
+                <button type="button" class="btn btn-outline-primary .text-nowrap keypadSpecialButton" onclick="keyClick('Y')">Rec / Yes</button>
+              </div>
+        </div>
+        <div class="row gx-2">
+            <div class="col gy-2">
+                <button type="button" class="btn btn-outline-primary btn-lg keypadButton" onclick="keyClick('7')">7</button>
+              </div>
+              <div class="col gy-2">
+                <button type="button" class="btn btn-outline-primary btn-lg keypadButton" onclick="keyClick('8')">8</button>
+              </div>
+              <div class="col gy-2">
+                <button type="button" class="btn btn-outline-primary btn-lg keypadButton" onclick="keyClick('9')">9</button>
+              </div>
+              <div class="col-4 gy-2">
+                <button type="button" class="btn btn-outline-primary .text-nowrap keypadSpecialButton" onclick="keyClick('N')">Light / No</button>
+              </div>
+        </div>
+        <div class="row gx-2">
+            <div class="col gy-2">
+                <button type="button" class="btn btn-outline-primary btn-sm keypadButton" onclick="keyClick('*')">* / Prev</button>
+              </div>
+              <div class="col gy-2">
+                <button type="button" class="btn btn-outline-primary btn-lg keypadButton" onclick="keyClick('0')">0</button>
+              </div>
+              <div class="col gy-2">
+                <button type="button" class="btn btn-outline-primary btn-sm keypadButton" onclick="keyClick('#')"># / Next</button>
+              </div>
+              <div class="col-4 gy-2">
+                <button type="button" class="btn btn-outline-primary keypadSpecialButton" id="connect" onclick="toggleConnection()">Connect</button>
+              </div>
+        </div>
+        <div class="row gx-2">
+          <div class="col gy-2">
+            <button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSettings" aria-expanded="false" aria-controls="collapseSettings">
+              Settings
+            </button>
+          </div>
+          <div class="col gy-2">
+            <button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMemory" aria-expanded="false" aria-controls="collapseMemory">
+              Memory
+            </button>
+          </div>
+          <div class="col gy-2">
+            <button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLogs" aria-expanded="false" aria-controls="collapseLogs">
+              Logs
+            </button>
+          </div>
+        </div>
+          <div class="row gx-2 collapse" id="collapseSettings" data-parent="#tabContainer">
+            <div class="row gx-2">
+            <div class="col-6 gy-2">
+              VKP Token
+            </div>
+            <div class="col-6 gy-2">
+              <input id="vkpToken" type="password" name="vkpToken" value=""/>
+            </div>
+          </div>
+          <div class="row gx-2">
+            <div class="col-6 gy-2">
+              <button class="btn btn-outline-primary" type="button" onclick="uploadFile('cert')">
+                Upload Cert
+              </button>
+            </div>
+            <div class="col-6 gy-2">
+              <input id="certupload" type="file" name="certupload" />
+            </div>
+          </div>
+          <div class="row gx-2">
+            <div class="col-6 gy-2">
+              <button class="btn btn-outline-primary" type="button" onclick="uploadFile('key')">
+                Upload Private Key
+              </button>
+            </div>
+            <div class="col-6 gy-2">
+              <input id="keyupload" type="file" name="keyupload"/>
+            </div>
+          </div>
+          <div class="row gx-2">
+            <div class="col-3 gy-2">
+                Host
+            </div>
+            <div class="col-6 gy-2">
+              <input id="host" type="text" name="host" value=""/>
+            </div>
+            <div class="col-3 gy-2">
+              <input id="secure" type="checkbox" name="secure" checked="false"/>
+              <label for="secure">Secure</label>
+            </div>
+          </div>
+          <div class="row gx-2">
+            <div class="col-6 gy-2">
+              <div>
+                <button class="btn btn-outline-primary" type="button" onclick="setVkpToken('key')">
+                  Change VKP Token
+                </button>
+              </div>
+            </div>
+            <div class="col-6 gy-2">
+              <input id="newVkpToken" type="password" name="newVkpToken" value=""/>
+            </div>
+          </div>
+          <div class="row gx-2">
+            <div class="col-6 gy-2">
+              <div>
+                <button class="btn btn-outline-primary" type="button" onclick="setAlarmToken('key')">
+                  Change Alarm Token
+                </button>
+              </div>
+            </div>
+            <div class="col-6 gy-2">
+              <input id="newAlarmToken" type="password" name="newAlarmToken" value=""/>
+            </div>
+          </div>
+          <div class="row gx-2">
+            <div class="col-6 gy-2">
+              <div>
+                <button class="btn btn-outline-primary" type="button" onclick="setSerialNumber()">
+                  Change Serial Number
+                </button>
+              </div>
+            </div>
+            <div class="col-6 gy-2">
+              <input id="newSerialNumber1" type="number" min="0" max="255" name="newSerialNumber1" value=""/>
+              <input id="newSerialNumber2" type="number" min="0" max="255" name="newSerialNumber2" value=""/>
+              <input id="newSerialNumber3" type="number" min="0" max="255" name="newSerialNumber3" value=""/>
+            </div>
+          </div>
+          <div class="row gx-2">
+            <div class="col-6 gy-2">
+              <div>
+                <button class="btn btn-outline-primary" type="button" onclick="reset()">
+                  Reset
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row gx-2 collapse" id="collapseMemory" data-parent="#tabContainer">
+          <div class="col-6 gy-2 card card-body">
+            <canvas id="chart" width="400" height="100"></canvas>
+            <div><span sytle="float: left">Uptime: <span id="uptime"></span></span> <span style="float: right;">Mem: <span id="memory">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span></div>
+          </div>
+        </div>
+        <div class="row gx-2 collapse" id="collapseLogs" data-parent="#tabContainer">
+          <div class="row gx-2">
+            <div class="col-6 gy-2 card card-body">
+              <pre id="lastLog">first message</pre>
+          </div>
+          <div class="row gx-2">
+            <div class="col-6 gy-2 card card-body">
+              <pre id="log">first message</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</body>
+</html>

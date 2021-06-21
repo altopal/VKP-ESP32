@@ -1,0 +1,8 @@
+{
+  "files.associations": {
+    "manager.h": "c",
+    "esp_wifi.h": "c",
+    "keypad_storage.h": "c",
+    "keypad_display.h": "c"
+  }
+}
