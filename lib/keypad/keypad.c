@@ -91,9 +91,14 @@ int process_frame(keypad_frame_t *frame, uint8_t *response, uint16_t *response_l
   }
   debug("%s", "Creating response...\n");
   uint8_t response_checksum = 0x0;
-  // All start by copying back frame token/counter/command
+  // All start by copying back my id
   *response_length = FRAME_TOKEN_LENGTH;
-  for (int i = 0; i < 6; i++) {
+  for (int i = 0; i < 4; i++) {
+    response[i] = KEYPAD_FRAME_TOKEN[i];
+    response_checksum += response[i];
+  }
+  // Then copy counter/command
+  for (int i = 4; i < 6; i++) {
     response[i] = frame->buf[i];
     response_checksum += response[i];
   }
