@@ -54,6 +54,7 @@ static size_t credentials_len = 0;
 #define WS_COMMAND_SET_SSL_PRIVATE_KEY 'R'
 #define WS_COMMAND_SET_SERIAL_NUMBER 'N'
 #define WS_COMMAND_RESET 'E'
+#define WS_COMMAND_RESPONSE_DELAY 'D'
 
 typedef struct session_context {
     int authenticated;
@@ -329,6 +330,20 @@ static esp_err_t receive_message(httpd_req_t *req)
                 break;
                 case WS_COMMAND_RESET: {
                     esp_restart();
+                }
+                break;
+                case WS_COMMAND_RESPONSE_DELAY: {
+                    uint8_t delayChar1 = ws_pkt.payload[1];
+                    uint8_t delayChar2 = ws_pkt.payload[2];
+                    uint8_t delayChar3 = ws_pkt.payload[3];
+                    uint8_t delay1 = delayChar1 - '0';
+                    uint8_t delay2 = delayChar2 - '0';
+                    uint8_t delay3 = delayChar3 - '0';
+                    if (delay1 > 9) { delay1 = 0; }
+                    if (delay2 > 9) { delay2 = 0; }
+                    if (delay3 > 9) { delay3 = 0; }
+                    uint8_t delay = delay1 * 100 + delay2 * 10 + delay3;
+                    response_delay_ms = delay;
                 }
                 break;
             }

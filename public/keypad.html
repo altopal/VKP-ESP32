@@ -168,6 +168,17 @@
               <input id="vkpToken" type="password" name="vkpToken" value=""/>
             </div>
           </div>
+          <div class="row gx-2 collapse" id="collapseSettings" data-parent="#tabContainer">
+            <div class="row gx-2">
+            <div class="col-6 gy-2">
+              <button class="btn btn-outline-primary" type="button" onclick="setResponseDelay()">
+              Response Delay (ms)
+              </button>
+            </div>
+            <div class="col-6 gy-2">
+              <input id="vkpResponseDelayMS" type="number" min="0" max="500" step="1" name="vkpResponseDelayMS" value=""/>
+            </div>
+          </div>
           <div class="row gx-2">
             <div class="col-6 gy-2">
               <button class="btn btn-outline-primary" type="button" onclick="uploadFile('cert')">

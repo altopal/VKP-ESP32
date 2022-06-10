@@ -106,3 +106,5 @@ int process_update_leds_45(keypad_frame_t *frame, uint8_t *response, uint16_t *r
 int process_display_50(keypad_frame_t *frame, uint8_t *response, uint16_t *response_length, uint8_t *response_checksum);
 int process_play_audio_60(keypad_frame_t *frame, uint8_t *response, uint16_t *response_length, uint8_t *response_checksum);
 int process_play_tone_61(keypad_frame_t *frame, uint8_t *response, uint16_t *response_length, uint8_t *response_checksum);
+
+extern int response_delay_ms;

@@ -17,6 +17,7 @@ static const int FRAME_LENGTH_PADDING = 9;
 static uint8_t response_buffer[256];
 static uint16_t response_buffer_length = sizeof(response_buffer) / sizeof(uint8_t);
 static uint8_t processed_42 = 0;
+int response_delay_ms = 70;
 
 static keypad_command_t keypad_commands[] = {
   {.key = KEYPRESS_40, .name = "Keypress 40", .process_command = &process_poll_for_key_press_40},

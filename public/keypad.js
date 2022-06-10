@@ -308,3 +308,8 @@ function setSerialNumber() {
 function reset() {
   ws.send(`E`);
 }
+
+function setResponseDelay() {
+  const delay = document.getElementById('vkpResponseDelayMS').value;
+  ws.send(`D${delay}`);
+}

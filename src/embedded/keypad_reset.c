@@ -48,6 +48,7 @@ static void process_reset(void* arg)
 
 void monitor_reset()
 {
+    //storage_reset();
     //zero-initialize the config structure.
     gpio_config_t io_conf = {};
     // Trigger interrupt on rising and falling edge
@@ -71,7 +72,7 @@ void monitor_reset()
     xTaskCreate(process_reset, "process_reset", 2048, NULL, 10, NULL);
 
     //install gpio isr service
-    //gpio_install_isr_service(ESP_INTR_FLAG_DEFAULT);
+    gpio_install_isr_service(ESP_INTR_FLAG_DEFAULT);
     //hook isr handler for specific gpio pin
     gpio_isr_handler_add(RESET_INPUT_PIN, gpio_isr_handler, (void*) RESET_INPUT_PIN);
 }

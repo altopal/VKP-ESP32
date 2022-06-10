@@ -56,7 +56,8 @@
                     document.getElementById('display').innerText = 'Socket open';
                     // Send a single message, needed at the moment for the server side to
                     // get a handle to the socket.
-                    ws.send('Aslartybartfast:changeme');
+                    //ws.send('Aslartybartfast:changeme');
+                    ws.send('A');
                 }
                 ws.onmessage = function (evt) {
                     console.log(evt.data);

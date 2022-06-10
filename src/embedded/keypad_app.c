@@ -14,6 +14,7 @@
 #include "driver/gpio.h"
 #include "keypad.h"
 #include "panel.h"
+#include "keypad.h"
 #include "keypad_wifi.h"
 #include "keypad_display.h"
 #include "keypad_web_socket.h"
@@ -52,9 +53,9 @@ int write_to_panel(uint8_t *buf, uint16_t length) {
   // for (int i = 0; i < length; i++) {
     // printf("%02X ", buf[i]);
   // }
-  // printf("\n");
+  // printf(" (%dms) \n", response_delay_ms);
 
-  vTaskDelay(70 / portTICK_PERIOD_MS);
+  vTaskDelay(response_delay_ms / portTICK_PERIOD_MS);
   uart_write_bytes(KEYPAD_UART_NUM, (const char *)buf, length);
   return 0;
 }
@@ -186,6 +187,7 @@ void app_main(void)
         keypad_init(values);
         free(values);
     }
+    monitor_reset();
     // This will block until wifi is connected
     wifi_connect();
 
@@ -220,7 +222,6 @@ void app_main(void)
     //Create a task to handler UART event from ISR
     xTaskCreatePinnedToCore(uart_keypad_event_task, "uart_keypad_event_task", 4096, NULL, 12, NULL, 0);
     monitor_alarm();
-    monitor_reset();
     monitor_memory();
 
     // For protocol analysis, emulate panel to drive real keypad, see how it

@@ -54,13 +54,14 @@ esp_err_t storage_write(char* key, void *value, size_t len) {
 }
 
 esp_err_t storage_reset() {
-  esp_err_t err = nvs_erase_key(my_handle, ALARM_TOKEN_KEY);
-  if (err != ESP_ERR_NVS_NOT_FOUND && err != ESP_OK) { return err; }
-  err = nvs_erase_key(my_handle, CREDENTIALS_KEY);
-  if (err != ESP_ERR_NVS_NOT_FOUND && err != ESP_OK) { return err; }
-  err = nvs_erase_key(my_handle, SSL_CERT_KEY);
-  if (err != ESP_ERR_NVS_NOT_FOUND && err != ESP_OK) { return err; }
-  err = nvs_erase_key(my_handle, SSL_PRIVATE_KEY_KEY);
-  if (err != ESP_ERR_NVS_NOT_FOUND && err != ESP_OK) { return err; }
+  ESP_ERROR_CHECK(nvs_flash_erase());
+  // esp_err_t err = nvs_erase_key(my_handle, ALARM_TOKEN_KEY);
+  // if (err != ESP_ERR_NVS_NOT_FOUND && err != ESP_OK) { return err; }
+  // err = nvs_erase_key(my_handle, CREDENTIALS_KEY);
+  // if (err != ESP_ERR_NVS_NOT_FOUND && err != ESP_OK) { return err; }
+  // err = nvs_erase_key(my_handle, SSL_CERT_KEY);
+  // if (err != ESP_ERR_NVS_NOT_FOUND && err != ESP_OK) { return err; }
+  // err = nvs_erase_key(my_handle, SSL_PRIVATE_KEY_KEY);
+  // if (err != ESP_ERR_NVS_NOT_FOUND && err != ESP_OK) { return err; }
   return ESP_OK;
 }

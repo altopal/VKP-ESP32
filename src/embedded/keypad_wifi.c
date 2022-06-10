@@ -22,6 +22,7 @@
 #include <wifi_provisioning/manager.h>
 
 #include "driver/uart.h"
+#include "keypad_log.h"
 #define CONFIG_EXAMPLE_PROV_TRANSPORT_BLE 1
 #define CONFIG_EXAMPLE_RESET_PROVISIONED 0
 #define CONFIG_EXAMPLE_RESET_PROV_MGR_ON_FAILURE
@@ -163,30 +164,6 @@ esp_err_t custom_prov_data_handler(uint32_t session_id, const uint8_t *inbuf, ss
 
     return ESP_OK;
 }
-
-// static void wifi_prov_print_qr(const char *name, const char *pop, const char *transport)
-// {
-//     if (!name || !transport) {
-//         ESP_LOGW(TAG, "Cannot generate QR code payload. Data missing.");
-//         return;
-//     }
-//     char payload[150] = {0};
-//     if (pop) {
-/*         snprintf(payload, sizeof(payload), "{\"ver\":\"%s\",\"name\":\"%s\"" \*/
-//                     ",\"pop\":\"%s\",\"transport\":\"%s\"}",
-//                     PROV_QR_VERSION, name, pop, transport);
-//     } else {
-/*         snprintf(payload, sizeof(payload), "{\"ver\":\"%s\",\"name\":\"%s\"" \*/
-//                     ",\"transport\":\"%s\"}",
-//                     PROV_QR_VERSION, name, transport);
-//     }
-// #ifdef CONFIG_EXAMPLE_PROV_SHOW_QR
-//     ESP_LOGI(TAG, "Scan this QR code from the provisioning application for Provisioning.");
-//     esp_qrcode_config_t cfg = ESP_QRCODE_CONFIG_DEFAULT();
-//     esp_qrcode_generate(&cfg, payload);
-// #endif /* CONFIG_APP_WIFI_PROV_SHOW_QR */
-//     ESP_LOGI(TAG, "If QR code is not visible, copy paste the below URL in a browser.\n%s?data=%s", QRCODE_BASE_URL, payload);
-// }
 
 void wifi_connect()
 {
@@ -350,5 +327,9 @@ void wifi_connect()
     }
 
     /* Wait for Wi-Fi connection */
-    xEventGroupWaitBits(wifi_event_group, WIFI_CONNECTED_EVENT, false, true, portMAX_DELAY);
+    EventBits_t bits;
+    do {
+        info("%s\n","Waiting for WiFi to connect...");
+        bits = xEventGroupWaitBits(wifi_event_group, WIFI_CONNECTED_EVENT, false, true, 1000 * portTICK_PERIOD_MS);
+    } while ((bits | WIFI_CONNECTED_EVENT) == 0);
 }
