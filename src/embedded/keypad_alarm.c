@@ -11,7 +11,8 @@
 #include "keypad_send_alarm.h"
 #include "keypad_log.h"
 
-#define ALARM_INPUT_PIN 33
+#define ALARM_INPUT_PIN_1 32
+#define ALARM_INPUT_PIN_2 33
 #define ESP_INTR_FLAG_DEFAULT 0
 #define ALARM_STATE_IN_ALARM 0
 #define ALARM_STATE_NO_ALARM 1
@@ -19,6 +20,10 @@
 #define ALARM_MESSAGE_BODY "An alarm has triggered"
 #define ALARM_DISARMED_MESSAGE_TITLE "House Alarm Disarmed"
 #define ALARM_DISARMED_MESSAGE_BODY "An alarm disarmed"
+#define PRE_ALARM_MESSAGE_TITLE "House Pre-Alarm"
+#define PRE_ALARM_MESSAGE_BODY "A pre-alarm has triggered"
+#define PRE_ALARM_DISARMED_MESSAGE_TITLE "House Pre-Alarm Disarmed"
+#define PRE_ALARM_DISARMED_MESSAGE_BODY "A pre-alarm disarmed"
 
 static xQueueHandle gpio_evt_queue = NULL;
 
@@ -36,10 +41,18 @@ static void process_alarm(void* arg)
         if(xQueueReceive(gpio_evt_queue, &io_num, portMAX_DELAY)) {
             level = gpio_get_level(io_num);
             info("GPIO[%d] intr, val: %d\n", io_num, level);
-            if (level == ALARM_STATE_IN_ALARM) {
-                send_alarm(ALARM_MESSAGE_TITLE, ALARM_MESSAGE_BODY);
+            if (io_num == ALARM_INPUT_PIN_1) {
+                if (level == ALARM_STATE_IN_ALARM) {
+                    send_alarm(ALARM_MESSAGE_TITLE, ALARM_MESSAGE_BODY);
+                } else {
+                    send_alarm(ALARM_DISARMED_MESSAGE_TITLE, ALARM_DISARMED_MESSAGE_BODY);
+                }
             } else {
-                send_alarm(ALARM_DISARMED_MESSAGE_TITLE, ALARM_DISARMED_MESSAGE_BODY);
+                if (level == ALARM_STATE_IN_ALARM) {
+                    send_alarm(PRE_ALARM_MESSAGE_TITLE, PRE_ALARM_MESSAGE_BODY);
+                } else {
+                    send_alarm(PRE_ALARM_DISARMED_MESSAGE_TITLE, PRE_ALARM_DISARMED_MESSAGE_BODY);
+                }
             }
         }
     }
@@ -55,7 +68,7 @@ void monitor_alarm()
     io_conf.mode = GPIO_MODE_INPUT;
 
     // bit mask of the pins to set
-    io_conf.pin_bit_mask = 1ULL << ALARM_INPUT_PIN;
+    io_conf.pin_bit_mask = (1ULL << ALARM_INPUT_PIN_1) | (1ULL << ALARM_INPUT_PIN_2);
     // disable pull-down mode
     io_conf.pull_down_en = 0;
     // enable pull-up mode
@@ -72,5 +85,6 @@ void monitor_alarm()
     //install gpio isr service
     gpio_install_isr_service(ESP_INTR_FLAG_DEFAULT);
     //hook isr handler for specific gpio pin
-    gpio_isr_handler_add(ALARM_INPUT_PIN, gpio_isr_handler, (void*) ALARM_INPUT_PIN);
+    gpio_isr_handler_add(ALARM_INPUT_PIN_1, gpio_isr_handler, (void*) ALARM_INPUT_PIN_1);
+    gpio_isr_handler_add(ALARM_INPUT_PIN_2, gpio_isr_handler, (void*) ALARM_INPUT_PIN_2);
 }

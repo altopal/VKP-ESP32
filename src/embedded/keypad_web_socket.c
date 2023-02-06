@@ -214,6 +214,10 @@ static void free_session_ctx(void* ctx) {
  */
 static esp_err_t receive_message(httpd_req_t *req)
 {
+    if (req->method == HTTP_GET) {
+        ESP_LOGI(TAG, "Handshake done, the new connection was opened");
+        return ESP_OK;
+    }
     ESP_LOGI(TAG, "receive_message");
     int socket = httpd_req_to_sockfd(req);
     // Initialize or get session context.
@@ -582,6 +586,7 @@ static httpd_handle_t start_webserver(void)
         credentials = NULL;
     }
     credentials_len = storage_get_value_length_for_key(CREDENTIALS_KEY);
+    ESP_LOGI(TAG, "Stored credentials length %d", credentials_len);
     if (credentials_len > 0) {
         credentials = malloc(credentials_len);
         storage_read(CREDENTIALS_KEY, credentials, &credentials_len);

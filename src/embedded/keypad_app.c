@@ -187,6 +187,8 @@ void app_main(void)
         keypad_init(values);
         free(values);
     }
+    //storage_reset();
+    //esp_err_t res = storage_write(CREDENTIALS_KEY, "abcdefg", 7);
     monitor_reset();
     // This will block until wifi is connected
     wifi_connect();
