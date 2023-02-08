@@ -55,6 +55,9 @@ void send_alarm(char* title, char* message)
     size_t len = sprintf(buf, "{\"alarmToken\": \"%.*s\", \"title\": \"%s\", \"body\": \"%s\"}"
                          , alarmTokenLength, alarmToken
                          , title, message);
+    
+    // info("Sending body: %.*s", len, buf);
+    esp_http_client_set_header(client, "content-type", "application/json");
     esp_http_client_set_post_field(client, buf, len);
     esp_err_t err = esp_http_client_perform(client);
 
