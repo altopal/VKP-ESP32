@@ -14,8 +14,8 @@
 #define ALARM_INPUT_PIN_1 32
 #define ALARM_INPUT_PIN_2 33
 #define ESP_INTR_FLAG_DEFAULT 0
-#define ALARM_STATE_IN_ALARM 0
-#define ALARM_STATE_NO_ALARM 1
+#define ALARM_STATE_IN_ALARM 1
+#define ALARM_STATE_NO_ALARM 0
 #define ALARM_MESSAGE_TITLE "House Alarm"
 #define ALARM_MESSAGE_BODY "An alarm has triggered"
 #define ALARM_DISARMED_MESSAGE_TITLE "House Alarm Disarmed"
@@ -80,7 +80,7 @@ void monitor_alarm()
     gpio_evt_queue = xQueueCreate(10, sizeof(uint32_t));
 
     //start gpio task
-    xTaskCreate(process_alarm, "process_alarm", 2048, NULL, 10, NULL);
+    xTaskCreate(process_alarm, "process_alarm", 8192, NULL, 10, NULL);
 
     //install gpio isr service
     gpio_install_isr_service(ESP_INTR_FLAG_DEFAULT);
